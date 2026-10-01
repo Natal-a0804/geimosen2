@@ -91,7 +91,7 @@
   /* «убери лишние» — крупные карточки в два ряда по три */
   #s5o .card{max-width:31%;padding:5px}
   #s5o .row{gap:16px 10px;margin-top:2vh}
-  #s5o .card img{width:100%;height:24vh;max-height:24vh;object-fit:cover;border-radius:10px}
+  #s5o .card img{width:100%;height:24vh;max-height:24vh;object-fit:contain;border-radius:10px}
   #s5o .card .word{font-size:clamp(16px,3.6vw,21px)}
   /* задачи: птицы крупнее, интервал больше, экран распределён */
   #s6{justify-content:space-between;padding-top:2vh;padding-bottom:4vh}
@@ -115,7 +115,7 @@
   #s2, #s4, #s7, #sm, #sc, #s6, #sg{justify-content:center}
   #countBirds{gap:4px}
   #s4{justify-content:space-evenly;padding-top:2vh}
-  #s2 .card img{width:100%;height:26vh;max-height:26vh;object-fit:cover;border-radius:10px}
+  #s2 .card img{width:100%;height:26vh;max-height:26vh;object-fit:contain;border-radius:10px}
   /* задание 3: картинка зверя крупнее */
   #pairPic img{max-height:31vh;width:auto}
   /* задание «Продолжи узор»: фигуры */
@@ -136,7 +136,7 @@
   .aword, .apic{overflow:hidden}
   #monRow{flex-wrap:nowrap;gap:12px;margin-bottom:10px}
   .mcard{flex:1 1 0;padding:5px;display:flex;flex-direction:column;align-items:center;max-width:32%}
-  .mcard img{width:100%;height:34vh;max-height:34vh;object-fit:cover;border-radius:10px}
+  .mcard img{width:100%;height:34vh;max-height:34vh;object-fit:contain;border-radius:10px}
   #sm{justify-content:space-evenly;padding-top:2vh}
   .mcard.picked{border-color:var(--green);box-shadow:0 0 0 3px #cfe8cf}
   .mcard.done{opacity:.55}
@@ -145,14 +145,14 @@
   .mword.done{border-color:var(--green);background:#F0F7F0;opacity:.55}
   #cmpRow{gap:10px;flex-wrap:nowrap}
   .ccard{flex:1 1 0;padding:5px;max-width:47%}
-  .ccard img{width:100%;height:31vh;max-height:31vh;object-fit:cover;border-radius:10px}
+  .ccard img{width:100%;height:31vh;max-height:31vh;object-fit:contain;border-radius:10px}
   .ccard.big{flex:0 0 auto;max-width:86%}
   .ccard.big img{height:46vh;max-height:46vh}
   #sc{justify-content:space-evenly}
   #pairPic{gap:6px;flex-wrap:nowrap;padding:0 2vw} #pairBtns{padding:0 2vw}
   .apic{flex:0 0 31%;max-width:31%;padding:0;border:0;background:transparent;box-shadow:none;height:auto;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:4px}
   .apic .cap, .aword .cap{font-size:clamp(15px,3.6vw,21px);font-weight:400;margin-top:0;text-align:center;line-height:1.15}
-  .apic img{width:100%;height:16.5vh;max-height:16.5vh;object-fit:cover;background:transparent;border:0;border-radius:12px;margin:0;display:block}
+  .apic img{width:100%;height:16.5vh;max-height:16.5vh;object-fit:contain;background:transparent;border:0;border-radius:12px;margin:0;display:block}
   .apic.picked img{outline:5px solid var(--green);outline-offset:2px} .apic.picked{border:0;background:transparent;box-shadow:none}
   .apic.done img{outline:5px solid var(--green);outline-offset:2px} .apic.done{border:0;background:transparent}
   .aword{padding:7px 5px;font-size:clamp(12px,3vw,17px);max-width:47%}
@@ -160,9 +160,9 @@
   #greenRow{display:grid;gap:5px;width:100%;max-width:365px;margin:0 auto}
   .gcell{padding:2px;min-height:auto;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center}
   .ropt{flex:1 1 0;padding:4px;max-width:32%}
-  .ropt img{width:100%;height:14vh;max-height:14vh;object-fit:cover;border-radius:10px}
+  .ropt img{width:100%;height:14vh;max-height:14vh;object-fit:contain;border-radius:10px}
   #ridPic{width:100%}
-  #ridPic img{width:100%;height:68vh;max-height:68vh;object-fit:cover;border-radius:14px}
+  #ridPic img{width:100%;height:68vh;max-height:68vh;object-fit:contain;border-radius:14px}
   #sz{justify-content:center}
   .gcell img{width:100%;object-fit:contain}
   .gcell.found{border:4px solid var(--green);background:#DFF0DF;box-shadow:0 0 0 2px #bfe0bf inset}
@@ -445,7 +445,7 @@ var HAVE = PRAISE.concat(['ne_tochno','nothing','star3','sm1','o1','r1','sc1','s
 var HAS_IMG = {};
 function loadImgList(list){ list.forEach(function(f){ HAS_IMG[f]=1; }); }
 function picture(src, cls){
-  if(HAS_IMG[src]) return '<img src="images/'+src+'?v=9" class="'+(cls||'')+'" alt="">';
+  if(HAS_IMG[src]) return '<img src="images/'+src+'?v=10" class="'+(cls||'')+'" alt="">';
   return '';
 }
 function q(id){ return document.getElementById(id); }
@@ -475,13 +475,29 @@ function praise(){
 }
 function playVideo(id){
   var v = q(id); if(!v) return;
-  try{ v.currentTime = 0; v.muted = false; v.play().catch(function(){ v.muted = true; v.play().catch(function(){}); }); }catch(e){}
+  try{
+    v.currentTime = 0; v.muted = false;
+    var pr = v.play();
+    if(pr && pr.catch) pr.catch(function(){
+      /* браузер запретил звук: играем без звука и включаем его первым касанием */
+      v.muted = true; v.dataset.needSound = '1'; v.play().catch(function(){});
+    });
+  }catch(e){}
 }
+/* первое касание включает звук там, где браузер его запретил */
+document.addEventListener('pointerdown', function(){
+  ['vid0','vids','vid8'].forEach(function(id){
+    var v = document.getElementById(id);
+    if(v && v.muted && v.dataset.needSound === '1' && !v.paused){ v.muted = false; }
+  });
+}, true);
 function bindTapVideo(id){
   var v = q(id); if(!v) return;
   v.addEventListener('pointerdown', function(e){
     e.preventDefault();
-    if(v.paused){ v.play().catch(function(){}); } else { v.pause(); }
+    if(v.muted){ v.muted = false; }                 /* тап по ролику — включаем звук */
+    if(v.paused || v.ended){ v.play().catch(function(){}); }
+    else if(v.dataset.needSound !== '1'){ v.pause(); }
   });
 }
 /* кнопка внизу: «Дальше ➡» появляется только после выполненного задания */
@@ -674,14 +690,14 @@ function drawAnim(){
   shuffle(list.slice()).forEach(function(a){
     var b = document.createElement('button');
     b.className = 'btn apic';
-    b.innerHTML = '<img src="images/' + a.a + '?v=9" alt=""><div class="cap">' + paint(a.at) + '</div>';
+    b.innerHTML = '<img src="images/' + a.a + '?v=10" alt=""><div class="cap">' + paint(a.at) + '</div>';
     b.setAttribute('data-act','animPick(el,"a","' + a.a + '")');
     top.appendChild(b);
   });
   shuffle(list.slice()).forEach(function(a){
     var b = document.createElement('button');
     b.className = 'btn apic';
-    b.innerHTML = '<img src="images/' + a.w + '?v=9" alt=""><div class="cap">' + paint(a.wt) + '</div>';
+    b.innerHTML = '<img src="images/' + a.w + '?v=10" alt=""><div class="cap">' + paint(a.wt) + '</div>';
     b.setAttribute('data-act','animPick(el,"w","' + a.a + '")');
     bot.appendChild(b);
   });
@@ -714,7 +730,7 @@ function animPick(el, side, key){
     if(cEl) cEl.textContent = 'Пара ' + anDone + ' из ' + list.length +
         ' · этап ' + (anStage+1) + ' из ' + ANIM_STAGES.length;
     if(anDone === list.length){
-      if(anStage < ANIM_STAGES.length - 1){ praise(); anStage++; setTimeout(function(){ drawAnim(); play('p2'); }, 2800); }
+      if(anStage < ANIM_STAGES.length - 1){ praise(); anStage++; setTimeout(function(){ drawAnim(); play('p2'); }, 2400); }
       else { praise(); setTimeout(function(){ footNext(NEXT.s3,'Дальше ➡'); }, 1200); }
     }
   } else {                                            /* не пара */
@@ -732,13 +748,13 @@ function drawRow(){
   var total = cur.show.length + 1;                       /* + пустая клетка */
   var hh = total >= 5 ? 9.2 : 12;                         /* пять клеток — мельче, четыре — крупные */
   q('rowShow').innerHTML = cur.show.map(function(n){
-    return '<div class="cell"><img style="height:' + hh + 'vh" src="images/' + n + '?v=9" alt=""></div>';
+    return '<div class="cell"><img style="height:' + hh + 'vh" src="images/' + n + '?v=10" alt=""></div>';
   }).join('') + '<div class="cell empty" id="cellEmpty" style="min-width:' + (hh * 0.8) + 'vh;min-height:' + (hh + 3) + 'vh"></div>';
   var row = q('rowAns'); row.innerHTML = '';
   shuffle(cur.opts).forEach(function(n){
     var b = document.createElement('button');
     b.className = 'btn figbtn';
-    b.innerHTML = '<img class="figopt" src="images/' + n + '?v=9" alt="">';
+    b.innerHTML = '<img class="figopt" src="images/' + n + '?v=10" alt="">';
     b.setAttribute('data-act','rowPick(el,"' + n + '")');
     row.appendChild(b);
   });
@@ -748,7 +764,7 @@ function rowPick(el, name){
   if(name === ROWS[rowIdx].ans){
     rowErr = 0;
     var ce = q('cellEmpty');
-    if(ce){ ce.className = 'cell filled'; ce.innerHTML = '<img src="images/' + name + '?v=9" alt="">'; }
+    if(ce){ ce.className = 'cell filled'; ce.innerHTML = '<img src="images/' + name + '?v=10" alt="">'; }
     if(rowIdx < ROWS.length-1){ rowIdx++; praise(); setTimeout(drawRow, 2400); }
     else { praise(); setTimeout(function(){ footNext(NEXT.s4, 'Дальше ➡'); }, 1200); }
   } else {
@@ -772,7 +788,7 @@ ONSHOW['s6'] = function(){ sumIdx = 0; sumErr = 0; drawSum(); };
 function sumRow(src, cnt){
   var line = document.createElement('div'); line.className = 'birds';
   for(var i = 0; i < cnt; i++){
-    var im = document.createElement('img'); im.src = 'images/' + src + '?v=9';
+    var im = document.createElement('img'); im.src = 'images/' + src + '?v=10';
     line.appendChild(im);
   }
   return line;
@@ -786,7 +802,7 @@ function sumMinusRow(src, cnt){
   var m = document.createElement('div'); m.className = 'sign'; m.innerHTML = '&minus;';
   line.appendChild(m);
   for(var i = 0; i < cnt; i++){
-    var im = document.createElement('img'); im.src = 'images/' + src + '?v=9'; line.appendChild(im);
+    var im = document.createElement('img'); im.src = 'images/' + src + '?v=10'; line.appendChild(im);
   }
   return line;
 }
@@ -872,7 +888,7 @@ ONSHOW['sm'] = function(){
   shuffle(MONTHS.slice()).forEach(function(m){
     var b = document.createElement('button');
     b.className = 'btn mcard';
-    b.innerHTML = '<img src="images/' + m.i + '?v=9" alt="">';
+    b.innerHTML = '<img src="images/' + m.i + '?v=10" alt="">';
     b.setAttribute('data-act','monPic(el,"' + m.t + '")');
     pics.appendChild(b);
   });
@@ -920,7 +936,7 @@ function drawCmp(){
   shuffle([c.a, c.b]).forEach(function(f){
     var b = document.createElement('button');
     b.className = 'btn ccard';
-    b.innerHTML = '<img src="images/' + f + '?v=9" alt="">';
+    b.innerHTML = '<img src="images/' + f + '?v=10" alt="">';
     b.setAttribute('data-act','cmpPick(el,"' + f + '")');
     row.appendChild(b);
   });
@@ -935,7 +951,7 @@ function cmpPick(el, f){
       if((c.innerHTML || '').indexOf(f) > -1){ c.classList.add('big'); c.removeAttribute('data-act'); }
       else { c.style.display = 'none'; }
     });
-    if(cmpIdx < CMP.length-1){ cmpIdx++; praise(); setTimeout(drawCmp, 3000); }
+    if(cmpIdx < CMP.length-1){ cmpIdx++; praise(); setTimeout(drawCmp, 2300); }
     else { praise(); setTimeout(function(){ footNext(NEXT.sc,'Дальше ➡'); }, 1600); }
   } else {
     el.classList.add('shake'); play('ne_tochno');
@@ -977,7 +993,7 @@ function drawGreen(){
   shuffle(cells).forEach(function(c){
     var b = document.createElement('button');
     b.className = 'btn gcell';
-    b.innerHTML = '<img style="height:' + h + 'vh;max-height:' + h + 'vh" src="images/' + c.f + '?v=9" alt="">';
+    b.innerHTML = '<img style="height:' + h + 'vh;max-height:' + h + 'vh" src="images/' + c.f + '?v=10" alt="">';
     b.setAttribute('data-act','greenPick(el,' + c.t + ')');
     box.appendChild(b);
   });
@@ -1013,7 +1029,7 @@ function drawRiddle(){
   shuffle(r.opts.slice()).forEach(function(o){
     var b = document.createElement('button');
     b.className = 'btn ropt';
-    b.innerHTML = '<img src="images/' + o.i + '?v=9" alt=""><div class="cap">' + paint(o.c) + '</div>';
+    b.innerHTML = '<img src="images/' + o.i + '?v=10" alt=""><div class="cap">' + paint(o.c) + '</div>';
     b.setAttribute('data-act','ridPick(el,"' + o.c + '")');
     row.appendChild(b);
   });
@@ -1027,9 +1043,9 @@ function ridPick(el, t){
     if(r.reward){
       q('ridText').style.display = 'none';                 /* оставляем только картинку-отгадку */
       q('ridRow').innerHTML = '';
-      q('ridPic').innerHTML = '<img src="images/' + r.reward + '?v=9" alt="">';
+      q('ridPic').innerHTML = '<img src="images/' + r.reward + '?v=10" alt="">';
     }
-    if(ridIdx < RIDDLES.length-1){ ridIdx++; praise(); setTimeout(drawRiddle, 3200); }
+    if(ridIdx < RIDDLES.length-1){ ridIdx++; praise(); setTimeout(drawRiddle, 2800); }
     else { praise(); setTimeout(function(){ footNext(NEXT.sz,'Дальше ➡'); }, 1200); }
   } else {
     el.classList.add('shake'); play('ne_tochno');
